@@ -1,0 +1,14 @@
+\subsection{Group 5 Literature Review: Random Forest Ensembles \& URL Heuristics}
+\label{sec:lit_review_g5}
+
+In the context of ensemble learning and heuristic URL profiling, Group 5 integrates two Scopus-indexed empirical benchmarks into the master literature foundation:
+
+\begin{enumerate}
+    \item \textbf{Comparative Empirical Evaluation of Random Forest in URL Classification}: 
+    Noh and Basri~\cite{noh2021url} conducted a systematic performance benchmark contrasting Support Vector Machines (SVM) against Random Forest ensembles across high-dimensional heuristic URL feature spaces. Their empirical findings demonstrated that Random Forest achieved superior classification accuracy ($>96.4\%$) and maintained robustness against multicollinear feature subsets. The authors highlighted that stochastic feature selection at individual split nodes substantially mitigates variance without amplifying bias, outperforming single hyperplane classifiers when dealing with obfuscated URL structures.
+    
+    \item \textbf{Heuristic URL Feature Profiling and Ensemble Learning}: 
+    Wei and Sekiya~\cite{wei2022phishing} investigated the vulnerability of contemporary web ecosystems to evasive domain generation strategies. By extracting 30 lexical, structural, and network-level URL heuristic features, the authors implemented hyper-tuned ensemble learning frameworks to evaluate cross-domain generalization. Their work established that tree-based bagging architectures achieve high generalization capacity while simultaneously providing Mean Decrease in Impurity (MDI) matrices that isolate the most informative structural markers (specifically SSL trust validation, suspicious anchor hyperlinks, and prefix-suffix hyphenation patterns).
+\end{enumerate}
+
+These literature contributions corroborate the architectural hypothesis of Group 5: that ensemble bagging coupled with systematic hyperparameter optimization offers optimal resilience against heuristic evasion while preserving diagnostic interpretability.

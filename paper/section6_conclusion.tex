@@ -1,0 +1,41 @@
+\section{Conclusion, Limitations \& Future Research Scope}
+\label{sec:conclusion}
+
+\subsection{Conclusion}
+This collaborative research investigation benchmarked five foundational and modern machine learning classification paradigms---Regularized Logistic Regression (Group 1), Gradient Boosting Trees (Group 2), Extremely Randomized Trees (Group 3), Linear Discriminant Analysis (Group 4), and Hyper-Tuned Random Forest Ensembles (Group 5)---for non-intrusive phishing website domain spotting using 30 discrete heuristic URL attributes. 
+
+As demonstrated by the Group 5 implementation, hyper-tuned Random Forest ensembles excel in modeling high-order non-linear feature interactions without succumbing to catastrophic overfitting. By coupling bootstrap aggregation with stochastic subspace feature projection ($m = \lfloor\sqrt{M}\rfloor$), the ensemble achieved rapid variance reduction, as verified by Out-Of-Bag (OOB) error decline curves that plateaued smoothly across tree scaling boundaries ($n_{\text{estimators}} \in [50, 200]$). Furthermore, the extraction of Mean Decrease in Gini Impurity (MDI) matrices provided granular diagnostic rankings, demonstrating that cryptographic indicators (\textit{SSLfinal\_State}), URL hyperlink integrity (\textit{URL\_of\_Anchor}), and domain hierarchy depth (\textit{having\_Sub\_Domain}) serve as the primary structural signals distinguishing deceptive domains from legitimate portals. Operating with sub-millisecond inference latency, the proposed architecture offers a viable candidate for edge-level network filtering and browser perimeter defense.
+
+\subsection{Limitations}
+Despite the robust diagnostic efficacy of the Random Forest model, several systemic and methodological limitations must be acknowledged:
+
+\begin{enumerate}
+    \item \textbf{Impurity Reduction Cardinality Bias}:
+    The Mean Decrease in Gini Impurity metric exhibits an inherent bias toward features with higher cardinality or continuous split opportunities. Although all 30 evaluated URL features are discrete $(\{-1, 0, 1\})$, subtle frequency variations in split selection across deeper trees can introduce minor distortion into structural importance attributions.
+    
+    \item \textbf{Heuristic Obfuscation \& Adversarial Evasion}:
+    Attackers increasingly leverage dynamic URL redirection chains, URL shortening services (e.g., bit.ly, tinyurl), and homograph attacks using Punycode/IDN spoofing. Static lexical and structural features alone cannot detect zero-day domains that mimic legitimate syntax until corresponding DNS and WHOIS telemetry updates propagate.
+    
+    \item \textbf{Absence of Dynamic Payload \& Content Inspection}:
+    By restricting the diagnostic pipeline exclusively to URL heuristics, the system trades comprehensive threat visibility for evaluation velocity. Phishing domains that host legitimate-looking landing pages while dynamically rendering credential-harvesting popups via obfuscated JavaScript evade perimeter URL profiling unless accompanied by DOM and SSL certificate chain inspection.
+    
+    \item \textbf{Concept Drift \& Temporal Degradation}:
+    Cyber adversaries continuously evolve registration vectors and domain generation algorithms (DGAs). Static ensembles trained on fixed temporal distributions experience accuracy degradation over time unless augmented by continuous retrospective re-training pipelines.
+\end{enumerate}
+
+\subsection{Future Research Scope}
+Building upon the experimental findings of this study, several prospective research avenues are outlined:
+
+\begin{enumerate}
+    \item \textbf{Axiomatic Explainability via TreeSHAP}:
+    Future iterations should integrate TreeSHAP (SHapley Additive exPlanations) to supersede heuristic MDI calculations. SHAP values provide mathematically rigorous local and global explanations grounded in cooperative game theory, eliminating cardinality bias and enabling security analysts to inspect real-time attribution breakdowns for individual blocked URLs.
+    
+    \item \textbf{Edge Compilation \& Real-Time Browser Extension Deployment}:
+    The optimized Random Forest model can be compiled into the Open Neural Network Exchange (ONNX) format or WebAssembly (Wasm). This will facilitate deployment as a lightweight, zero-latency client-side browser extension that evaluates URLs in sub-microsecond intervals prior to DOM execution, completely protecting user privacy without exfiltrating browsing history.
+    
+    \item \textbf{Online Continual Learning \& Streaming Adaptation}:
+    To combat temporal concept drift, future work will investigate hybrid streaming ensembles utilizing Hoeffding Adaptive Trees or online bagging. Connecting the model directly to live security feeds (such as PhishTank, OpenPhish, and CERT feeds) will allow the system to adapt its decision boundaries incrementally without catastrophic forgetting.
+    
+    \item \textbf{Multimodal Hybrid Architectures}:
+    Integrating structural heuristic feature vectors with character-level convolutional neural networks (CNNs) and transformer-based sequence encoders (e.g., RoBERTa or Domain-BERT) will enable the classifier to capture both high-level domain metadata and subtle sub-word phonemic perturbations simultaneously.
+\end{enumerate}

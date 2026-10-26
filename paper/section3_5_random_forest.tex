@@ -1,0 +1,87 @@
+\subsection{Algorithmic Mathematical Formulations: Random Forest Ensemble (Group 5)}
+\label{sec:algo_random_forest}
+
+The Random Forest architecture is an ensemble meta-estimator that constructs an uncorrelated committee of randomized decision trees $\{\mathcal{T}_b\}_{b=1}^B$ operating via Bootstrap Aggregation (Bagging) and random subspace feature projection. 
+
+\subsubsection{Bootstrap Aggregation (Bagging)}
+Given a training dataset $\mathcal{D} = \{(\mathbf{x}_i, y_i)\}_{i=1}^N$ where $\mathbf{x}_i \in \{-1, 0, 1\}^{30}$ denotes the heuristic feature vector and $y_i \in \{0, 1\}$ represents the domain classification (0 for Phishing, 1 for Legitimate), each individual tree $\mathcal{T}_b$ is trained on an independently drawn bootstrap sample $\mathcal{D}_b$ obtained by sampling $N$ instances uniformly with replacement:
+\begin{equation}
+    P\left((\mathbf{x}_i, y_i) \in \mathcal{D}_b\right) = 1 - \left(1 - \frac{1}{N}\right)^N \xrightarrow[N \to \infty]{} 1 - e^{-1} \approx 0.632
+    \label{eq:bootstrap_prob}
+\end{equation}
+Consequently, approximately $36.8\%$ of the training observations are omitted from each bootstrap replicate, forming the Out-Of-Bag (OOB) sample subset $\mathcal{D}_b^{\text{OOB}} = \mathcal{D} \setminus \mathcal{D}_b$.
+
+\subsubsection{Node Splitting Mechanics \& Gini Impurity}
+At each candidate decision node $t$ within tree $\mathcal{T}_b$, a stochastic feature subspace of size $m = \lfloor\sqrt{M}\rfloor = \lfloor\sqrt{30}\rfloor \approx 5$ is randomly projected without replacement. The optimal partition split $s^*$ is selected by maximizing the Mean Decrease in Gini Impurity. The Gini impurity of node $t$ containing sample subset $\mathcal{D}_t$ of cardinality $N_t$ is mathematically expressed as:
+\begin{equation}
+    I_G(t) = 1 - \sum_{k=0}^{1} p_{t,k}^2
+    \label{eq:gini_impurity}
+\end{equation}
+where $p_{t,k} = \frac{1}{N_t} \sum_{i \in \mathcal{D}_t} \mathbb{I}(y_i = k)$ denotes the empirical class probability for category $k$. A split $s$ divides node $t$ into left child $t_L$ (with $N_{t_L}$ samples) and right child $t_R$ (with $N_{t_R}$ samples). The resultant reduction in impurity is quantified as:
+\begin{equation}
+    \Delta I_G(s, t) = I_G(t) - \left( \frac{N_{t_L}}{N_t} I_G(t_L) + \frac{N_{t_R}}{N_t} I_G(t_R) \right)
+    \label{eq:gini_reduction}
+\end{equation}
+The splitting algorithm searches across the subspace subset to identify the optimal split candidate:
+\begin{equation}
+    s^* = \arg\max_{s \in \mathcal{S}_m} \Delta I_G(s, t)
+    \label{eq:optimal_split}
+\end{equation}
+
+\subsubsection{Ensemble Aggregation \& Majority Voting}
+For an unseen test query $\mathbf{x}^*$, the ensemble aggregates the individual binary outputs of all $B$ decision trees via pluralistic majority voting:
+\begin{equation}
+    \hat{y}_{\text{RF}}(\mathbf{x}^*) = \arg\max_{k \in \{0, 1\}} \sum_{b=1}^B \mathbb{I}\left( \mathcal{T}_b(\mathbf{x}^*) = k \right)
+    \label{eq:majority_voting}
+\end{equation}
+The associated posterior class probability estimate is derived as the arithmetic mean across the ensemble:
+\begin{equation}
+    P\left(y = 1 \mid \mathbf{x}^*\right) = \frac{1}{B} \sum_{b=1}^B P_{\mathcal{T}_b}\left(y = 1 \mid \mathbf{x}^*\right)
+    \label{eq:prob_estimate}
+\end{equation}
+
+\subsubsection{Out-of-Bag (OOB) Error Decline Tracking}
+The Out-of-Bag error provides an unbiased internal cross-validation estimate without requiring an independent holdout partition. For each sample $\mathbf{x}_i$, an aggregated OOB prediction is formed solely by trees that omitted $\mathbf{x}_i$ during training:
+\begin{equation}
+    \hat{y}_{\text{OOB}}(\mathbf{x}_i) = \arg\max_{k \in \{0, 1\}} \sum_{b: \mathbf{x}_i \notin \mathcal{D}_b} \mathbb{I}\left(\mathcal{T}_b(\mathbf{x}_i) = k\right)
+    \label{eq:oob_pred}
+\end{equation}
+The ensemble Out-of-Bag error is formulated as:
+\begin{equation}
+    \mathcal{E}_{\text{OOB}}(B) = \frac{1}{N} \sum_{i=1}^N \mathbb{I}\left(\hat{y}_{\text{OOB}}(\mathbf{x}_i) \neq y_i\right)
+    \label{eq:oob_error}
+\end{equation}
+Tracking $\mathcal{E}_{\text{OOB}}(B)$ across $B \in [10, 200]$ confirms the asymptotic stabilization of ensemble variance as tree bounds scale.
+
+\subsubsection{Mean Decrease in Gini Impurity (MDI) Formulation}
+The diagnostic structural relevance of each heuristic feature $f_j$ is determined by accumulating the total weighted impurity reduction attributed to $f_j$ across all decision nodes in the forest:
+\begin{equation}
+    \text{MDI}(f_j) = \frac{1}{B} \sum_{b=1}^B \sum_{t \in \mathcal{T}_b: v(t) = f_j} \left( \frac{N_t}{N} \right) \Delta I_G(s^*_t, t)
+    \label{eq:mdi_weight}
+\end{equation}
+where $v(t)$ denotes the feature selected at node $t$, and $N_t / N$ normalizes the local split impact by sample prevalence.
+
+\begin{table}[htbp]
+\centering
+\caption{Group 5 Random Forest Hyperparameter Grid Specification}
+\label{tab:rf_hyperparams}
+\begin{tabular}{|l|l|p{3.2cm}|}
+\hline
+\textbf{Hyperparameter} & \textbf{Search Space} & \textbf{Optimization Objective} \\
+\hline
+\texttt{n\_estimators} & $[50, 100, 150, 200]$ & Mitigate variance via tree scaling \\
+\hline
+\texttt{max\_depth} & $[10, 20, 30, \text{None}]$ & Restrict tree capacity / overfit control \\
+\hline
+\texttt{min\_samples\_split} & $[2, 5]$ & Enforce structural generalization \\
+\hline
+\texttt{min\_samples\_leaf} & $[1, 2]$ & Smooth leaf node decision boundaries \\
+\hline
+\texttt{max\_features} & $[\text{'sqrt'}, \text{'log2'}]$ & Modulate inter-tree decorrelation \\
+\hline
+\texttt{criterion} & Gini Impurity & Impurity reduction metric \\
+\hline
+\texttt{cv} & 5-Fold Stratified & Prevent validation partition leakage \\
+\hline
+\end{tabular}
+\end{table}

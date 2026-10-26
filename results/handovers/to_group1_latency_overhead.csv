@@ -1,0 +1,8 @@
+Metric,Value
+Model Name,Random Forest Ensemble (Group 5)
+Training Time (Seconds),0.8638
+Total Inference Time (Seconds),0.064558
+Inference Latency per Sample (Microseconds),29.20
+Number of Training Samples,8843
+Number of Test Samples,2211
+Ensemble Estimators (n_estimators),150

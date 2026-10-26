@@ -1,0 +1,64 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Heuristic URL Feature Profiling for Phishing Domain Spotting Using Hyper-Tuned Random Forest Ensembles}
+
+\author{\IEEEauthorblockN{Group 5 Research Consortium}
+\IEEEauthorblockA{\textit{Department of Computer Science and Engineering} \\
+\textit{Coursework: Cryptography \& Network Security (CNS ISE)}\\
+Email: group5@academic.cns.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+Phishing attacks remain a primary vector for online fraud, account hijacking, and data breaches. Because dynamic webpage analysis and static blacklisting are often bypassed by ephemeral, zero-day domains, non-intrusive URL heuristic profiling provides an efficient line of perimeter defense. In this paper, as part of the five-model comparative benchmark, Group 5 presents a hyper-tuned Random Forest ensemble framework targeting 30 discrete heuristic URL indicators. Through extensive hyperparameter sweeps across tree bounds ($n_{\text{estimators}} \in [50, 200]$) and maximum tree depths, the proposed architecture minimizes ensemble variance while avoiding overfitting. Out-of-Bag (OOB) error decline curves confirm rapid convergence, while Mean Decrease in Gini Impurity (MDI) matrices isolate key structural markers, including SSL certificates, anchor tag hyperlinks, and subdomain depth. The final model achieves high diagnostic accuracy with sub-millisecond per-sample inference latency, demonstrating practical viability for real-time edge filtering.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Phishing Domain Detection, Random Forest Ensembles, Heuristic Feature Profiling, Out-of-Bag Error, Gini Impurity, Hyperparameter Optimization, Network Security.
+\end{IEEEkeywords}
+
+\input{section1_intro.tex}
+
+\section{Comprehensive Literature Review}
+\label{sec:literature_review}
+\input{section2_literature.tex}
+
+\section{Methodology \& Mathematical Formulations}
+\label{sec:methodology}
+
+\subsection{Centralized Data Engineering Pipeline Summary}
+The standardized dataset comprises 30 extracted lexical, structural, and domain-reputation heuristic features defined on discrete domains $\{-1, 0, 1\}$. Stratified 80/20 train-test partitioning is maintained across all benchmarked architectures to ensure experimental parity.
+
+\input{section3_5_random_forest.tex}
+
+\section{Experimental Architecture \& Hardware Profiling}
+\label{sec:hardware_eval}
+Experimental simulations were conducted on a dedicated evaluation workstation executing Python 3.10 and Scikit-Learn 1.7.2. Training speeds and single-sample inference latencies were clocked using monotonic nanosecond timers to evaluate edge viability.
+
+\section{Performance Evaluation \& Results}
+\label{sec:results}
+The hyper-tuned Random Forest model demonstrated superior classification performance, achieving balanced sensitivity and specificity across phishing and legitimate categories. Out-of-Bag error tracking verified that performance stabilizes beyond 100 estimators without latency penalties.
+
+\input{section6_conclusion.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,2 @@
+Model,Accuracy (%),Precision (%),Recall (%),F1-Score (%),ROC-AUC
+Random Forest (Group 5),97.42%,96.96%,98.46%,97.70%,0.9943

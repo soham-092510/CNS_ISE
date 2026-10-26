@@ -1,0 +1,32 @@
+\section{Introduction \& System Domain Context}
+\label{sec:intro}
+
+Phishing represents one of the most pervasive cyber threats in contemporary distributed computing environments, serving as the initial attack vector for widespread credential harvesting, corporate espionage, and financial fraud. Attackers systematically engineer fraudulent web pages that mimic authoritative institutions, deceiving users into surrendering sensitive credentials such as passwords, personal identification numbers, and cryptographic private keys. Traditionally, defensive countermeasures have relied primarily on blacklisting mechanisms, such as Google Safe Browsing and PhishTank. While blacklists demonstrate negligible false-positive rates for established malicious domains, they suffer from critical temporal latency, proving fundamentally ineffective against short-lived, zero-hour phishing campaigns that operate for merely a few hours before migrating to alternate hosting infrastructures.
+
+To overcome the architectural shortcomings of static blacklisting, heuristic URL feature profiling has emerged as an essential non-intrusive paradigm. By examining the lexical, structural, and domain-registration markers embedded directly within Uniform Resource Locators (URLs), security filters can classify suspicious traffic at the network perimeter without downloading or rendering malicious web payloads.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=1.3cm, auto,
+    block/.style={rectangle, draw, fill=blue!10, text width=2.8cm, text centered, rounded corners, minimum height=1cm, font=\footnotesize},
+    decision/.style={diamond, draw, fill=orange!15, text width=2.2cm, text centered, font=\footnotesize, inner sep=0pt},
+    line/.style={draw, -latex', thick}]
+    
+    \node [block] (input) {Raw Web URL Request};
+    \node [block, below of=input] (extract) {30 Heuristic URL Features Extraction};
+    \node [block, below of=extract] (rf) {Hyper-Tuned Random Forest Ensemble};
+    \node [decision, below of=rf] (decide) {Voting Threshold ($\tau \ge 0.5$)};
+    \node [block, left of=decide, node distance=2.5cm, fill=red!15] (phish) {Flag as Phishing Domain};
+    \node [block, right of=decide, node distance=2.5cm, fill=green!15] (legit) {Permit Legitimate Access};
+    
+    \path [line] (input) -- (extract);
+    \path [line] (extract) -- (rf);
+    \path [line] (rf) -- (decide);
+    \path [line] (decide) -- node [above] {Yes} (phish);
+    \path [line] (decide) -- node [above] {No} (legit);
+\end{tikzpicture}
+\caption{System Domain Architecture: End-to-End Heuristic URL Profiling Pipeline for Phishing Domain Spotting.}
+\label{fig:domain_context}
+\end{figure}
+
+The primary scope of this collaborative investigation is to benchmark five diverse machine learning paradigms across a standardized 30-feature heuristic dataset. Specifically, Group 5 focuses on \textit{Hyper-Tuned Random Forest Ensembles}, evaluating how non-linear bootstrap aggregation and stochastic feature subsampling isolate high-impact discriminative indicators (such as SSL certificate anomalies, anchor URL distributions, and subdomain depth) while maintaining sub-millisecond classification latencies suitable for inline edge deployment.

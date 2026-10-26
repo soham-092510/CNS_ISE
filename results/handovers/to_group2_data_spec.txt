@@ -1,0 +1,5 @@
+=== GROUP 5 CONFIRMATION TO GROUP 2 (Section 3.1 Data Pipeline) ===
+Feature Count: 30 discrete heuristic URL attributes confirmed.
+Target Encoding: Mapped {-1: 0 (Phishing), 1: 1 (Legitimate)}.
+Split Ratio: 80% Training, 20% Testing, Stratified, random_state=42.
+Missing Value Imputation: 0 missing cells found in dataset.

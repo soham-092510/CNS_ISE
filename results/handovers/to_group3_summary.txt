@@ -1,0 +1,9 @@
+=== GROUP 5 DELIVERABLE TO GROUP 3 (Section 5.1 Leaderboard) ===
+Model: Random Forest Ensemble
+Accuracy:  97.42%
+Precision: 96.96%
+Recall:    98.46%
+F1-Score:  97.70%
+ROC-AUC:   0.9943
+Confusion Matrix: TP=1213, TN=941, FP=38, FN=19
+Optimal Hyperparameters: {'max_depth': 30, 'max_features': 'log2', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 150}

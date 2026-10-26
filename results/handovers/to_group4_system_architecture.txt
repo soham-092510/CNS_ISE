@@ -1,0 +1,11 @@
+=== GROUP 5 DELIVERABLE TO GROUP 4 (Section 4 System Specs) ===
+OS: Windows 10 (10.0.26200)
+Processor: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel
+Python Version: 3.10.11
+Scikit-Learn Version: 1.7.2
+NumPy Version: 2.2.6
+Pandas Version: 2.3.3
+Matplotlib Version: 3.10.9
+Ensemble Backend: sklearn.ensemble.RandomForestClassifier
+Parallelization: n_jobs=-1 (all physical & logical CPU cores)
+Random State: 42 (Strict Reproducibility Seed)
